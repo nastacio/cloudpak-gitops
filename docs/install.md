@@ -192,6 +192,7 @@ After completing the list of activities listed in the previous sections, you hav
 
 1. After filling out the form details, click the "Create" button
 
+
 1. (add actual Cloud Pak) Click on the "New App+" button again and fill out the form with values matching the Cloud Pak of your choice, according to the table below:
 
     | Cloud Pak | Application Name | Path | Namespace |
@@ -258,14 +259,52 @@ After completing the list of activities listed in the previous sections, you hav
 
    ```sh
    # Note that the path config/argocd-ga was renamed config/argocd in 0.5.0
+   # OCP 4.7+
+   argo_route=openshift-gitops-server
+   argo_secret=openshift-gitops-cluster
+   sa_account=openshift-gitops-argocd-application-controller
+
+   argo_pwd=$(oc get secret ${argo_secret} \
+               -n openshift-gitops \
+               -o jsonpath='{.data.admin\.password}' | base64 -d ; echo ) \
+   && argo_url=$(oc get route ${argo_route} \
+                  -n openshift-gitops \
+                  -o jsonpath='{.spec.host}') \
+   && argocd login "${argo_url}" \
+         --username admin \
+         --password "${argo_pwd}" \
+         --insecure
+   ```
+
+1. Add the `argo` application. (this step assumes you still have shell variables assigned from previous steps) :
+
+   Using OCP 4.6:
+
+   ```sh
+   # OCP 4.6
    argocd app create argo-app \
          --project default \
          --dest-namespace openshift-gitops \
          --dest-server https://kubernetes.default.svc \
-         --repo ${gitops_url:?} \
+         --repo https://github.com/IBM/cloudpak-gitops \
          --path config/argocd \
          --sync-policy automated \
-         --revision ${gitops_branch:?} \
+         --revision main \
+         --upsert 
+    ```
+
+   Using OCP 4.7 and later (the object names change a little from OCP 4.6:)
+
+   ```sh
+   # OCP 4.7+
+   argocd app create argo-app \
+         --project default \
+         --dest-namespace openshift-gitops \
+         --dest-server https://kubernetes.default.svc \
+         --repo https://github.com/IBM/cloudpak-gitops \
+         --path config/argocd-ga \
+         --sync-policy automated \
+         --revision main \
          --upsert 
     ```
 
