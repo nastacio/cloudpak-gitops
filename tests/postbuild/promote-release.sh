@@ -99,6 +99,7 @@ function merge_and_promote() {
         --repo "${git_repo}" \
         --json mergeCommit \
         -t '{{.mergeCommit.oid}}') \
+    && git remote -v \
     && git config user.name "GitHub Actions Bot" \
     && git config user.email "<>" \
     && git pull \
