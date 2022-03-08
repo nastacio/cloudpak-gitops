@@ -13,7 +13,11 @@ fi
 # Input variables
 git_repo=${1}
 git_source_branch=${2}
+<<<<<<< HEAD
 release_delta=${3}
+=======
+release_delta=${4}
+>>>>>>> 067fca67ac636519d8f688e9b65255d8d97a0593
 
 
 #
@@ -29,6 +33,30 @@ trap cleanRun EXIT
 
 
 #
+<<<<<<< HEAD
+=======
+# Extracts only the file names containing differences between the source
+# and target branches.
+#
+function extract_branch() {
+    local result=0
+
+    #
+    # Analyze the differences between branches
+    # to determine which Cloud Paks to test
+    git clone "${git_repo}" cloudpak-gitops \
+    && cd cloudpak-gitops \
+    && git config pull.rebase false \
+    && git checkout "${git_source_branch}" \
+    && git pull origin "${git_source_branch}" \
+    || result=1
+
+    return ${result}
+}
+
+
+#
+>>>>>>> 067fca67ac636519d8f688e9b65255d8d97a0593
 # Determines the new release number and creates a draft release with it. 
 #
 # arg1 - Bump in semver version relative to last tag
@@ -38,6 +66,7 @@ function merge_and_promote() {
 
     local result=0
 
+<<<<<<< HEAD
     cd "${WORKDIR}" \
     && git clone "${git_repo}" cloudpak-gitops \
     && cd cloudpak-gitops \
@@ -48,6 +77,8 @@ function merge_and_promote() {
         return 1
     fi
 
+=======
+>>>>>>> 067fca67ac636519d8f688e9b65255d8d97a0593
     latest_version=$(git tag -l --sort=version:refname "v*" | tail -n 1)
     latest_major_version=$(echo "${latest_version//.*/}" | cut -d "v" -f 2)
     latest_minor_version=$(echo "${latest_version}" | cut -d "." -f 2)
@@ -111,6 +142,12 @@ function merge_and_promote() {
 }
 
 WORKDIR=$(mktemp -d) || exit 1
+<<<<<<< HEAD
+=======
+cd "${WORKDIR}"
+
+extract_branch
+>>>>>>> 067fca67ac636519d8f688e9b65255d8d97a0593
 
 is_draft=$(gh pr view "${git_source_branch}" --repo "${git_repo}" --json isDraft -t '{{.isDraft}}')
 if [ "${is_draft}" == "true" ]; then
