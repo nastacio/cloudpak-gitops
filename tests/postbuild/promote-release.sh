@@ -100,7 +100,7 @@ function merge_and_promote() {
         --json mergeCommit \
         -t '{{.mergeCommit.oid}}') \
     && git config user.email "autotester@non.ibm.com" \
-    && git config --global user.name "PR Auto Tester" \
+    && git config user.name "PR Auto Tester" \
     && git pull \
     && git tag \
         -m "${squash_title}" \
