@@ -3,15 +3,15 @@ name: Merge
 on:
   pull_request:
     types:
-    - closed
+      - closed
     branches:
-    - main
+      - main
 
 jobs:
   destroy:
     if: ${{ !contains( github.event.pull_request.labels.*.name, 'skip ci' ) }}
     runs-on: ubuntu-latest
-    container:  icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.6
+    container: icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.6
 
     env:
       HOME: /root
@@ -24,4 +24,4 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Verify destroy
-        run: tests/postbuild/cluster.sh --delete -t ibmcloud -n "gitops-$GITHUB_HEAD_REF" --apikey "$IBM_CLOUD_API_KEY" 
+        run: tests/postbuild/cluster.sh --delete -t ibmcloud -n "gitops-$GITHUB_HEAD_REF" --apikey "$IBM_CLOUD_API_KEY"

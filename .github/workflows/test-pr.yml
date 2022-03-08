@@ -2,13 +2,13 @@ name: Test
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
     if: ${{ !contains( github.event.pull_request.labels.*.name, 'skip ci' ) }}
     runs-on: ubuntu-latest
-    container:  icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.6
+    container: icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.6
 
     env:
       HOME: /root
@@ -48,7 +48,6 @@ jobs:
     needs: test
 
     steps:
-
       - uses: actions/checkout@v2
 
       - name: Download semver result
@@ -57,6 +56,6 @@ jobs:
           name: semver
 
       - name: Promote release if test passes
-        run: tests/postbuild/promote-release.sh "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" "${GITHUB_HEAD_REF}" "${GITHUB_BASE_REF}" "$(cat semver/test-sh-semver.txt)"
+        run: tests/postbuild/promote-release.sh "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" "${GITHUB_HEAD_REF}" "$(cat semver/test-sh-semver.txt)"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

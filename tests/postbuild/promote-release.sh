@@ -13,7 +13,6 @@ fi
 # Input variables
 git_repo=${1}
 git_source_branch=${2}
-git_target_branch=${3}
 release_delta=${4}
 
 
@@ -107,7 +106,7 @@ function merge_and_promote() {
         -m "${squash_title}" \
         "${new_version}" \
         "${merge_id}" \
-    && git push origin "${new_version}" \
+    && git push "${git_repo/\/\////GitHub\ Actions\ Bot:$GITHUB_TOKEN@}" "${new_version}" \
     && gh release create "${new_version}" \
         --repo "${git_repo}" \
         --prerelease \
@@ -128,9 +127,9 @@ cd "${WORKDIR}"
 extract_branch
 
 is_draft=$(gh pr view "${git_source_branch}" --repo "${git_repo}" --json isDraft -t '{{.isDraft}}')
-# if [ "${is_draft}" == "true" ]; then
-#     echo "Pull request is still a draft. Skipping"
-#     gh pr view "${git_source_branch}"
-# else
+if [ "${is_draft}" == "true" ]; then
+    echo "Pull request is still a draft. Skipping"
+    gh pr view "${git_source_branch}"
+else
     merge_and_promote "${release_delta}"
-# fi
+fi
