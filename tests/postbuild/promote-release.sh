@@ -58,6 +58,8 @@ function extract_branch() {
 function merge_and_promote() {
     local release_delta=${1}
 
+    local result=0
+
     latest_version=$(git tag -l --sort=version:refname "v*" | tail -n 1)
     latest_major_version=$(echo "${latest_version//.*/}" | cut -d "v" -f 2)
     latest_minor_version=$(echo "${latest_version}" | cut -d "." -f 2)
@@ -97,6 +99,7 @@ function merge_and_promote() {
         --repo "${git_repo}" \
         --json mergeCommit \
         -t '{{.mergeCommit.oid}}') \
+    && git pull \
     && git tag \
         -m "${squash_title}" \
         "${new_version}" \
@@ -108,9 +111,12 @@ function merge_and_promote() {
         --draft \
         --generate-notes \
         --target "${merge_id}" \
-        --title "Release ${new_version}"
+        --title "Release ${new_version}" \
+    || result=1
 
     echo "${new_version}"
+
+    return ${result}
 }
 
 WORKDIR=$(mktemp -d) || exit 1
