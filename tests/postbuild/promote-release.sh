@@ -99,7 +99,7 @@ function merge_and_promote() {
         --repo "${git_repo}" \
         --json mergeCommit \
         -t '{{.mergeCommit.oid}}') \
-    && git pull \
+    && git pull  \
     && git tag \
         -m "${squash_title}" \
         "${new_version}" \
