@@ -17,7 +17,7 @@ git_target_branch=${3}
 
 # Output variables
 labels=cp-shared:ibm-cloudpaks
-workers=0
+workers=3
 setup_gps=false
 
 rc_major=0
@@ -132,9 +132,11 @@ for cloudpak in cp-shared cp4i cp4a cp4aiops cp4s cp4d
 do
     if grep "/${cloudpak}/" "${branch_delta_output_file}"; then
         labels="${labels},${cloudpak}:${cloudpak}"
-        workers=$((workers+3))
         if [ "${cloudpak}" == "cp4d" ]; then
             setup_gps=true
+        fi
+        if [ "${cloudpak}" != "cp-shared" ]; then
+            workers=$((workers+3))
         fi
     fi
 done
