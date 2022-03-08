@@ -99,8 +99,8 @@ function merge_and_promote() {
         --repo "${git_repo}" \
         --json mergeCommit \
         -t '{{.mergeCommit.oid}}') \
-    && git config user.email "autotester@non.ibm.com" \
-    && git config user.name "PR Auto Tester" \
+    && git config user.name "GitHub Actions Bot" \
+    && git config user.email "<>" \
     && git pull \
     && git tag \
         -m "${squash_title}" \
