@@ -41,9 +41,11 @@ jobs:
         with:
           name: semver
           path: test-sh-semver.txt
+
   promote:
     if: ${{ !contains( github.event.pull_request.labels.*.name, 'skip ci' ) }}
     runs-on: ubuntu-latest
+    needs: test
 
     steps:
 
